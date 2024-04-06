@@ -1,3 +1,4 @@
+import { nil } from "@rezonmain/utils-nil";
 import { Parsable } from "@/classes/Parsable";
 import {
   parseCommandFromRawPart,
@@ -6,68 +7,57 @@ import {
   parseSourceFromRawPart,
   parseTagsFromRawPart,
 } from "@/helpers/twitch.helpers";
-import type {
-  TwitchIRCCommand,
-  TwitchIRCMessage,
-  TwitchIRCMessageTags,
-  TwitchIRCRawParts,
-  TwitchIRCSource,
-} from "@/types/twitch.types";
+import type { TwitchIRCMessage, TwitchIRCRawParts } from "@/types/twitch.types";
+
+type P<T extends keyof TwitchIRCMessage> = [
+  Parsable<TwitchIRCMessage[T]> | TwitchIRCMessage[T],
+  keyof TwitchIRCRawParts
+];
 
 class TwitchIRCLazyMessage implements TwitchIRCMessage {
-  private tgs: Parsable<TwitchIRCMessageTags> | TwitchIRCMessageTags;
-  private src: Parsable<TwitchIRCSource> | TwitchIRCSource;
-  private cmd: Parsable<TwitchIRCCommand> | TwitchIRCCommand;
-  private pms: Parsable<string[]> | string[];
-  private _parts: TwitchIRCRawParts;
+  private tgs: P<"tags">;
+  private src: P<"source">;
+  private cmd: P<"command">;
+  private pms: P<"params">;
+  /**
+   * Raw parsed parts of the message
+   */
+  private parts: TwitchIRCRawParts | null = null;
 
-  constructor(private _raw: string) {
-    const p = parseRawParts(this.raw);
-    this.tgs = new Parsable<TwitchIRCMessageTags>(parseTagsFromRawPart, p.tgs);
-    this.src = new Parsable<TwitchIRCSource>(parseSourceFromRawPart, p.src);
-    this.cmd = new Parsable<TwitchIRCCommand>(parseCommandFromRawPart, p.cmd);
-    this.pms = new Parsable<string[]>(parseParamsFromRawPart, p.pms);
-    this._parts = p;
+  constructor(readonly raw: string) {
+    this.tgs = [new Parsable(parseTagsFromRawPart, "tgs"), "tgs"];
+    this.src = [new Parsable(parseSourceFromRawPart, "src"), "src"];
+    this.cmd = [new Parsable(parseCommandFromRawPart, "cmd"), "cmd"];
+    this.pms = [new Parsable(parseParamsFromRawPart, "pms"), "pms"];
   }
 
-  get raw() {
-    return this._raw;
-  }
+  private getProperty<T extends keyof TwitchIRCMessage>(property: P<T>) {
+    if (nil(this.parts)) {
+      this.parts = parseRawParts(this.raw);
+    }
+    const [parsableOrValue, partRef] = property;
 
-  get parts() {
-    return this._parts;
+    if (parsableOrValue instanceof Parsable) {
+      property[0] = parsableOrValue.parse(this.parts[partRef]);
+      return property[0];
+    }
+    return parsableOrValue;
   }
 
   get tags() {
-    if (this.tgs instanceof Parsable) {
-      this.tgs = this.tgs.parse();
-      return this.tgs;
-    }
-    return this.tgs;
+    return this.getProperty(this.tgs);
   }
 
   get source() {
-    if (this.src instanceof Parsable) {
-      this.src = this.src.parse();
-      return this.src;
-    }
-    return this.src;
+    return this.getProperty(this.src);
   }
 
   get command() {
-    if (this.cmd instanceof Parsable) {
-      this.cmd = this.cmd.parse();
-      return this.cmd;
-    }
-    return this.cmd;
+    return this.getProperty(this.cmd);
   }
 
   get params() {
-    if (this.pms instanceof Parsable) {
-      this.pms = this.pms.parse();
-      return this.pms;
-    }
-    return this.pms;
+    return this.getProperty(this.pms);
   }
 }
 
