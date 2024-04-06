@@ -6,7 +6,7 @@ import {
   parseSourceFromRawPart,
   parseTagsFromRawPart,
 } from "@/helpers/twitch.helpers";
-import {
+import type {
   TwitchIRCCommand,
   TwitchIRCMessage,
   TwitchIRCMessageTags,
@@ -15,53 +15,59 @@ import {
 } from "@/types/twitch.types";
 
 class TwitchIRCLazyMessage implements TwitchIRCMessage {
-  private _tgs: Parsable<TwitchIRCMessageTags> | TwitchIRCMessageTags;
-  private _src: Parsable<TwitchIRCSource> | TwitchIRCSource;
-  private _cmd: Parsable<TwitchIRCCommand> | TwitchIRCCommand;
-  private _pms: Parsable<string[]> | string[];
+  private tgs: Parsable<TwitchIRCMessageTags> | TwitchIRCMessageTags;
+  private src: Parsable<TwitchIRCSource> | TwitchIRCSource;
+  private cmd: Parsable<TwitchIRCCommand> | TwitchIRCCommand;
+  private pms: Parsable<string[]> | string[];
+  private _parts: TwitchIRCRawParts;
 
   constructor(private _raw: string) {
     const p = parseRawParts(this.raw);
-    this._tgs = new Parsable<TwitchIRCMessageTags>(parseTagsFromRawPart, p.tgs);
-    this._src = new Parsable<TwitchIRCSource>(parseSourceFromRawPart, p.src);
-    this._cmd = new Parsable<TwitchIRCCommand>(parseCommandFromRawPart, p.cmd);
-    this._pms = new Parsable<string[]>(parseParamsFromRawPart, p.pms);
+    this.tgs = new Parsable<TwitchIRCMessageTags>(parseTagsFromRawPart, p.tgs);
+    this.src = new Parsable<TwitchIRCSource>(parseSourceFromRawPart, p.src);
+    this.cmd = new Parsable<TwitchIRCCommand>(parseCommandFromRawPart, p.cmd);
+    this.pms = new Parsable<string[]>(parseParamsFromRawPart, p.pms);
+    this._parts = p;
   }
 
   get raw() {
     return this._raw;
   }
 
+  get parts() {
+    return this._parts;
+  }
+
   get tags() {
-    if (this._tgs instanceof Parsable) {
-      this._tgs = this._tgs.parse();
-      return this._tgs;
+    if (this.tgs instanceof Parsable) {
+      this.tgs = this.tgs.parse();
+      return this.tgs;
     }
-    return this._tgs;
+    return this.tgs;
   }
 
   get source() {
-    if (this._src instanceof Parsable) {
-      this._src = this._src.parse();
-      return this._src;
+    if (this.src instanceof Parsable) {
+      this.src = this.src.parse();
+      return this.src;
     }
-    return this._src;
+    return this.src;
   }
 
   get command() {
-    if (this._cmd instanceof Parsable) {
-      this._cmd = this._cmd.parse();
-      return this._cmd;
+    if (this.cmd instanceof Parsable) {
+      this.cmd = this.cmd.parse();
+      return this.cmd;
     }
-    return this._cmd;
+    return this.cmd;
   }
 
   get params() {
-    if (this._pms instanceof Parsable) {
-      this._pms = this._pms.parse();
-      return this._pms;
+    if (this.pms instanceof Parsable) {
+      this.pms = this.pms.parse();
+      return this.pms;
     }
-    return this._pms;
+    return this.pms;
   }
 }
 

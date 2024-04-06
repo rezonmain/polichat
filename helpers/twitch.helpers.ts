@@ -26,14 +26,14 @@ const parseParamsFromRawPart = (rawPart: string): string[] => {
   return [];
 };
 
-const parseCompleteMessage = (rawMessage: string): TwitchIRCMessage => {
-  const p = parseRawParts(rawMessage);
+const parseCompleteMessage = (raw: string): TwitchIRCMessage => {
+  const parts = parseRawParts(raw);
   return {
-    raw: rawMessage,
-    tags: parseTagsFromRawPart(p.tgs),
-    source: parseSourceFromRawPart(p.src),
-    command: parseCommandFromRawPart(p.cmd),
-    params: parseParamsFromRawPart(p.pms),
+    raw,
+    tags: parseTagsFromRawPart(parts.tgs),
+    source: parseSourceFromRawPart(parts.src),
+    command: parseCommandFromRawPart(parts.cmd),
+    params: parseParamsFromRawPart(parts.pms),
   };
 };
 
