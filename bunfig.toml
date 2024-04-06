@@ -1,0 +1,2 @@
+[install.scopes]
+"@rezonmain" = { token = "$GITHUB_PACKAGE_TOKEN", url = "https://npm.pkg.github.com" }

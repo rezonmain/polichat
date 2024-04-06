@@ -10,9 +10,10 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@rezonmain/utils-empty": "^0.0.1",
+    "next": "14.1.4",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.1.4"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
