@@ -3,21 +3,21 @@ import { TwitchIRCLazyMessage } from "@/classes/TwitchIRCLazyMessage";
 import { parseCompleteMessage } from "@/helpers/twitch.helpers";
 
 class TwitchIRCMessageParser {
-  constructor(private raw: string) {}
+  constructor() {}
 
   /**
    * Completely parses the raw message
    */
-  parse(): TwitchIRCMessage {
-    return parseCompleteMessage(this.raw);
+  parse(raw: string): TwitchIRCMessage {
+    return parseCompleteMessage(raw);
   }
 
   /**
    * Lazily parses the raw message.
    * Message components are only parsed when accessed
    */
-  lazyParse(): TwitchIRCLazyMessage {
-    return new TwitchIRCLazyMessage(this.raw);
+  lazyParse(raw: string): TwitchIRCLazyMessage {
+    return new TwitchIRCLazyMessage(raw);
   }
 }
 
