@@ -1,4 +1,5 @@
 import { ranFixLenInt } from "@/helpers/utils.helpers";
+import { TwitchIRCMessageParser } from "@/classes/TwitchIRCMessageParser";
 
 class TwitchChatClient {
   static SECURE_WEBSOCKET_URL = "wss://irc-ws.chat.twitch.tv:443";
@@ -15,7 +16,8 @@ class TwitchChatClient {
 
   constructor(
     private channelName: string,
-    private wsc = new WebSocket(TwitchChatClient.SECURE_WEBSOCKET_URL)
+    private wsc = new WebSocket(TwitchChatClient.SECURE_WEBSOCKET_URL),
+    private parser = new TwitchIRCMessageParser()
   ) {
     this.username = TwitchChatClient.getRandomAnonUsername();
     this.registerSocketHandlers();
@@ -28,7 +30,7 @@ class TwitchChatClient {
     };
 
     this.wsc.onmessage = (event) => {
-      console.log(event.data);
+      this.handleMessage(event.data);
     };
   }
 
@@ -40,6 +42,11 @@ class TwitchChatClient {
 
   private join() {
     this.wsc.send(`JOIN #${this.channelName}`);
+  }
+
+  private handleMessage(raw: string) {
+    const message = this.parser.lazyParse(raw);
+    console.log(message);
   }
 
   static getRandomAnonUsername() {
