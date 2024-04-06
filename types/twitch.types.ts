@@ -45,8 +45,8 @@ type TwitchIRCSource = {
 
 type TwitchIRCCommand = {
   command: string;
-  channel: string;
-  botCommand: string;
+  channel?: string;
+  [key: string]: any;
 };
 
 export type {
