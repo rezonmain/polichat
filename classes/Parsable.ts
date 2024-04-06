@@ -1,11 +1,12 @@
 class Parsable<T> {
   constructor(
     private parseFn: (rawPart: string) => T,
-    private _rawPart: string
+    private _rawPart: string | null = null
   ) {}
 
-  parse() {
-    return this.parseFn(this._rawPart);
+  parse(rawPart: string) {
+    this._rawPart = rawPart;
+    return this.parseFn(rawPart);
   }
 
   get rawPart() {
