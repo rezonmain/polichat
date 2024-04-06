@@ -9,12 +9,12 @@ type TwitchIRCMessage = {
    * Tags are key-value pairs that provide additional context to the message
    * see tags reference: https://dev.twitch.tv/docs/irc/tags
    */
-  tags: TwitchIRCMessageTags;
+  tags: TwitchIRCMessageTags | null;
 
   /**
    * The source of the message
    */
-  source: TwitchIRCSource;
+  source: TwitchIRCSource | null;
 
   /**
    * The command of the message
@@ -39,7 +39,7 @@ type TwitchIRCMessageTags = {
 };
 
 type TwitchIRCSource = {
-  nick: string;
+  nick: string | null;
   host: string;
 };
 
