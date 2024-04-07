@@ -1,5 +1,6 @@
 import {
   TwitchIRCCommand,
+  TwitchIRCMessage,
   TwitchIRCMessageTags,
   TwitchIRCRawParts,
   TwitchIRCSource,
@@ -172,9 +173,136 @@ const PARSE_TAGS_FROM_RAW_PART_CASES: [string, TwitchIRCMessageTags | null][] =
     ["emote-sets=0,33,50,237", { "emote-sets": ["0", "33", "50", "237"] }],
   ];
 
+const PARSE_COMPLETE_MESSAGE_CASES: [string, TwitchIRCMessage][] = [
+  [
+    TEST_MESSAGES[0],
+    {
+      raw: TEST_MESSAGES[0],
+      tags: null,
+      source: null,
+      command: { ident: "", unsupported: true },
+      parameters: { params: "" },
+    },
+  ],
+  [
+    TEST_MESSAGES[1],
+    {
+      raw: TEST_MESSAGES[1],
+      tags: null,
+      source: null,
+      command: { ident: "PING" },
+      parameters: { params: "tmi.twitch.tv" },
+    },
+  ],
+  [
+    TEST_MESSAGES[2],
+    {
+      raw: TEST_MESSAGES[2],
+      tags: {
+        badges: {
+          staff: "1",
+          broadcaster: "1",
+          turbo: "1",
+        },
+        color: "#FF0000",
+        "display-name": "PetsgomOO",
+        "emote-only": "1",
+        emotes: {
+          "33": [
+            {
+              start: "0",
+              end: "7",
+            },
+          ],
+        },
+        id: "c285c9ed-8b1b-4702-ae1c-c64d76cc74ef",
+        mod: "0",
+        "room-id": "81046256",
+        subscriber: "0",
+        turbo: "0",
+        "tmi-sent-ts": "1550868292494",
+        "user-id": "81046256",
+        "user-type": "staff",
+      },
+      source: {
+        nick: "petsgomoo",
+        host: "petsgomoo@petsgomoo.tmi.twitch.tv",
+      },
+      command: { ident: "PRIVMSG", channel: "#petsgomoo" },
+      parameters: { params: "DansGame" },
+    },
+  ],
+  [
+    TEST_MESSAGES[3],
+    {
+      raw: TEST_MESSAGES[3],
+      tags: null,
+      source: {
+        nick: "lovingt3s",
+        host: "lovingt3s@lovingt3s.tmi.twitch.tv",
+      },
+      command: { ident: "PRIVMSG", channel: "#lovingt3s" },
+      parameters: { params: "!dilly", botCommand: "dilly" },
+    },
+  ],
+  [
+    TEST_MESSAGES[4],
+    {
+      raw: TEST_MESSAGES[4],
+      tags: null,
+      source: {
+        nick: "foo",
+        host: "foo@foo.tmi.twitch.tv",
+      },
+      command: { ident: "PART", channel: "#bar" },
+      parameters: { params: "" },
+    },
+  ],
+  [
+    TEST_MESSAGES[5],
+    {
+      raw: TEST_MESSAGES[5],
+      tags: null,
+      source: {
+        nick: "foo",
+        host: "foo@foo.tmi.twitch.tv",
+      },
+      command: { ident: "JOIN", channel: "#bar" },
+      parameters: { params: "" },
+    },
+  ],
+  [
+    TEST_MESSAGES[6],
+    {
+      raw: TEST_MESSAGES[6],
+      tags: null,
+      source: {
+        nick: null,
+        host: "foo.tmi.twitch.tv",
+      },
+      command: { ident: "353" },
+      parameters: { params: "foo" },
+    },
+  ],
+  [
+    TEST_MESSAGES[7],
+    {
+      raw: TEST_MESSAGES[7],
+      tags: null,
+      source: {
+        nick: null,
+        host: "foo.tmi.twitch.tv",
+      },
+      command: { ident: "366" },
+      parameters: { params: "End of /NAMES list" },
+    },
+  ],
+];
+
 export {
   PARSE_RAW_PARTS_CASES,
   PARSE_SOURCE_FROM_RAW_PART_CASES,
   PARSE_COMMAND_FROM_RAW_PART_CASES,
   PARSE_TAGS_FROM_RAW_PART_CASES,
+  PARSE_COMPLETE_MESSAGE_CASES,
 };
