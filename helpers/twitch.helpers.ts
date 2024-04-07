@@ -53,7 +53,50 @@ const parseSourceFromRawPart = (rawPart: string): TwitchIRCSource | null => {
 };
 
 const parseCommandFromRawPart = (rawPart: string): TwitchIRCCommand => {
-  return { command: "", channel: "", botCommand: "" };
+  const splitted = rawPart.split(" ");
+
+  switch (splitted[0]) {
+    case "JOIN":
+    case "PART":
+    case "NOTICE":
+    case "CLEARCHAT":
+    case "HOSTTARGET":
+    case "PRIVMSG":
+    case "USERSTATE":
+    case "ROOMSTATE":
+    case "001":
+      return {
+        ident: splitted[0],
+        channel: splitted[1],
+      };
+
+    case "PING":
+    case "GLOBALUSERSTATE":
+    case "RECONECT":
+    case "002":
+    case "003":
+    case "004":
+    case "353":
+    case "366":
+    case "372":
+    case "375":
+    case "376":
+      return {
+        ident: splitted[0],
+      };
+
+    case "CAP":
+      return {
+        ident: splitted[0],
+        isCapRequestEnabled: splitted[2] === "ACK",
+      };
+
+    default:
+      return {
+        ident: splitted[0],
+        unsupported: true,
+      };
+  }
 };
 
 const parseParamsFromRawPart = (rawPart: string): string[] => {

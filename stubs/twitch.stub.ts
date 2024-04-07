@@ -1,4 +1,8 @@
-import { TwitchIRCRawParts, TwitchIRCSource } from "@/types/twitch.types";
+import {
+  TwitchIRCCommand,
+  TwitchIRCRawParts,
+  TwitchIRCSource,
+} from "@/types/twitch.types";
 
 const TEST_MESSAGES = [
   "",
@@ -89,4 +93,19 @@ const PARSE_SOURCE_FROM_RAW_PART_CASES: [string, TwitchIRCSource | null][] = [
   [MESSAGE_RAW_PARTS[7].src, { nick: null, host: "foo.tmi.twitch.tv" }],
 ];
 
-export { PARSE_RAW_PARTS_CASES, PARSE_SOURCE_FROM_RAW_PART_CASES };
+const PARSE_COMMAND_FROM_RAW_PART_CASES: [string, TwitchIRCCommand][] = [
+  [MESSAGE_RAW_PARTS[0].cmd, { ident: "", unsupported: true }],
+  [MESSAGE_RAW_PARTS[1].cmd, { ident: "PING" }],
+  [MESSAGE_RAW_PARTS[2].cmd, { ident: "PRIVMSG", channel: "#petsgomoo" }],
+  [MESSAGE_RAW_PARTS[3].cmd, { ident: "PRIVMSG", channel: "#lovingt3s" }],
+  [MESSAGE_RAW_PARTS[4].cmd, { ident: "PART", channel: "#bar" }],
+  [MESSAGE_RAW_PARTS[5].cmd, { ident: "JOIN", channel: "#bar" }],
+  [MESSAGE_RAW_PARTS[6].cmd, { ident: "353" }], // for numeric commands, the other command props are ignored
+  [MESSAGE_RAW_PARTS[7].cmd, { ident: "366" }],
+];
+
+export {
+  PARSE_RAW_PARTS_CASES,
+  PARSE_SOURCE_FROM_RAW_PART_CASES,
+  PARSE_COMMAND_FROM_RAW_PART_CASES,
+};
