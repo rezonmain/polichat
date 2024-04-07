@@ -25,10 +25,10 @@ class TwitchIRCLazyMessage implements TwitchIRCMessage {
   private parts: TwitchIRCRawParts | null = null;
 
   constructor(readonly raw: string) {
-    this.tgs = [new Parsable(parseTagsFromRawPart, "tgs"), "tgs"];
-    this.src = [new Parsable(parseSourceFromRawPart, "src"), "src"];
-    this.cmd = [new Parsable(parseCommandFromRawPart, "cmd"), "cmd"];
-    this.pms = [new Parsable(parseParamsFromRawPart, "pms"), "pms"];
+    this.tgs = [new Parsable(parseTagsFromRawPart), "tgs"];
+    this.src = [new Parsable(parseSourceFromRawPart), "src"];
+    this.cmd = [new Parsable(parseCommandFromRawPart), "cmd"];
+    this.pms = [new Parsable(parseParamsFromRawPart), "pms"];
   }
 
   private getProperty<T extends keyof TwitchIRCMessage>(property: P<T>) {
