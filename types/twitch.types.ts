@@ -44,7 +44,18 @@ type TwitchIRCSource = {
 };
 
 type TwitchIRCCommand = {
-  command: string;
+  /**
+   * The command identifier.
+   * Ex: JOIN, PART, PRIVMSG, etc.
+   */
+  ident: string;
+
+  /**
+   * The channel the command is targeting.
+   * Only present for channel-specific commands.
+   * Always starts with a #
+   * Ex: `#petsgomoo`
+   */
   channel?: string;
   [key: string]: any;
 };
