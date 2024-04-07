@@ -94,6 +94,7 @@ const PARSE_SOURCE_FROM_RAW_PART_CASES: [string, TwitchIRCSource | null][] = [
 ];
 
 const PARSE_COMMAND_FROM_RAW_PART_CASES: [string, TwitchIRCCommand][] = [
+  ["NOTSUPPORTEDLOL", { ident: "NOTSUPPORTEDLOL", unsupported: true }],
   [MESSAGE_RAW_PARTS[0].cmd, { ident: "", unsupported: true }],
   [MESSAGE_RAW_PARTS[1].cmd, { ident: "PING" }],
   [MESSAGE_RAW_PARTS[2].cmd, { ident: "PRIVMSG", channel: "#petsgomoo" }],
