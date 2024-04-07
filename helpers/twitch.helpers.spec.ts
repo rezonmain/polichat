@@ -2,6 +2,7 @@ import { describe, it, expect } from "bun:test";
 import {
   parseCommandFromRawPart,
   parseCompleteMessage,
+  parseParamsFromRawPart,
   parseRawParts,
   parseSourceFromRawPart,
   parseTagsFromRawPart,
@@ -9,6 +10,7 @@ import {
 import {
   PARSE_COMMAND_FROM_RAW_PART_CASES,
   PARSE_COMPLETE_MESSAGE_CASES,
+  PARSE_PARAMS_FROM_RAW_PART_CASES,
   PARSE_RAW_PARTS_CASES,
   PARSE_SOURCE_FROM_RAW_PART_CASES,
   PARSE_TAGS_FROM_RAW_PART_CASES,
@@ -42,7 +44,14 @@ describe("Twitch Helpers", () => {
     );
   });
 
-  // describe("parseParamsFromRawPart()", () => {});
+  describe("parseParamsFromRawPart()", () => {
+    it.each(PARSE_PARAMS_FROM_RAW_PART_CASES)(
+      "should parse params from %s",
+      (raw, expected) => {
+        expect(parseParamsFromRawPart(raw)).toEqual(expected);
+      }
+    );
+  });
 
   describe("parseTagsFromRawPart()", () => {
     it.each(PARSE_TAGS_FROM_RAW_PART_CASES)(

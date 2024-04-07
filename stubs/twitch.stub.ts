@@ -2,6 +2,7 @@ import {
   TwitchIRCCommand,
   TwitchIRCMessage,
   TwitchIRCMessageTags,
+  TwitchIRCParams,
   TwitchIRCRawParts,
   TwitchIRCSource,
 } from "@/types/twitch.types";
@@ -105,6 +106,17 @@ const PARSE_COMMAND_FROM_RAW_PART_CASES: [string, TwitchIRCCommand][] = [
   [MESSAGE_RAW_PARTS[5].cmd, { ident: "JOIN", channel: "#bar" }],
   [MESSAGE_RAW_PARTS[6].cmd, { ident: "353" }], // for numeric commands, the other command props are ignored
   [MESSAGE_RAW_PARTS[7].cmd, { ident: "366" }],
+];
+
+const PARSE_PARAMS_FROM_RAW_PART_CASES: [string, TwitchIRCParams][] = [
+  ["", { params: "" }],
+  ["tmi.twitch.tv", { params: "tmi.twitch.tv" }],
+  ["DansGame", { params: "DansGame" }],
+  ["!dilly", { params: "!dilly", botCommand: "dilly" }],
+  ["", { params: "" }],
+  ["", { params: "" }],
+  ["foo", { params: "foo" }],
+  ["End of /NAMES list", { params: "End of /NAMES list" }],
 ];
 
 const PARSE_TAGS_FROM_RAW_PART_CASES: [string, TwitchIRCMessageTags | null][] =
@@ -303,6 +315,7 @@ export {
   PARSE_RAW_PARTS_CASES,
   PARSE_SOURCE_FROM_RAW_PART_CASES,
   PARSE_COMMAND_FROM_RAW_PART_CASES,
+  PARSE_PARAMS_FROM_RAW_PART_CASES,
   PARSE_TAGS_FROM_RAW_PART_CASES,
   PARSE_COMPLETE_MESSAGE_CASES,
 };
