@@ -1,5 +1,6 @@
 import { ranFixLenInt } from "@/helpers/utils.helpers";
 import { TwitchIRCMessageParser } from "@/classes/TwitchIRCMessageParser";
+import type { TwitchIRCMessage } from "@/types/twitch.types";
 
 class TwitchChatClient {
   static SECURE_WEBSOCKET_URL = "wss://irc-ws.chat.twitch.tv:443";
@@ -11,22 +12,26 @@ class TwitchChatClient {
     "twitch.tv/commands",
     "twitch.tv/membership",
   ];
-
-  private username: string;
+  static getRandomAnonUsername() {
+    return `${TwitchChatClient.ANON_USERNAME_BASE}${ranFixLenInt(8)}`;
+  }
 
   constructor(
     private channelName: string,
     private wsc = new WebSocket(TwitchChatClient.SECURE_WEBSOCKET_URL),
-    private parser = new TwitchIRCMessageParser()
-  ) {
-    this.username = TwitchChatClient.getRandomAnonUsername();
+    private parser = new TwitchIRCMessageParser(),
+    private username = TwitchChatClient.getRandomAnonUsername(),
+    private password = TwitchChatClient.ANON_PASSWORD,
+    private capabilities = TwitchChatClient.CAPABILITIES
+  ) {}
+
+  connect() {
     this.registerSocketHandlers();
   }
 
   private registerSocketHandlers() {
     this.wsc.onopen = () => {
       this.authenticate();
-      // this.join();
     };
 
     this.wsc.onmessage = (event) => {
@@ -35,24 +40,36 @@ class TwitchChatClient {
   }
 
   private authenticate() {
-    this.wsc.send(`CAP REQ :${TwitchChatClient.CAPABILITIES.join(" ")}`);
-    this.wsc.send(`PASS ${TwitchChatClient.ANON_PASSWORD}`);
+    this.wsc.send(`CAP REQ :${this.capabilities.join(" ")}`);
+    this.wsc.send(`PASS ${this.password}`);
     this.wsc.send(`NICK ${this.username}`);
   }
 
-  private join() {
+  private joinChannel() {
     this.wsc.send(`JOIN #${this.channelName}`);
   }
 
-  private handleMessage(raw: string) {
-    const messages = raw.split("\r\n");
-    messages.forEach((message) => {
-      console.log(this.parser.parse(message));
-    });
+  private pong(m: TwitchIRCMessage) {
+    this.wsc.send(`PONG ${m.parameters.params}`);
   }
 
-  static getRandomAnonUsername() {
-    return `${TwitchChatClient.ANON_USERNAME_BASE}${ranFixLenInt(8)}`;
+  private handleMessage(raw: string) {
+    const messages = raw.trim().split("\r\n");
+    messages.forEach((message) => {
+      const m = this.parser.lazyParse(message);
+
+      switch (m.command.ident) {
+        case "001":
+          this.joinChannel();
+          break;
+        case "PING":
+          this.pong(m);
+          break;
+        case "PRIVMSG":
+          console.log(m.parameters.params);
+          break;
+      }
+    });
   }
 }
 
