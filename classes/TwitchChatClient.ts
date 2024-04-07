@@ -45,8 +45,10 @@ class TwitchChatClient {
   }
 
   private handleMessage(raw: string) {
-    const message = this.parser.lazyParse(raw);
-    console.log(message);
+    const messages = raw.split("\r\n");
+    messages.forEach((message) => {
+      console.log(this.parser.parse(message));
+    });
   }
 
   static getRandomAnonUsername() {
