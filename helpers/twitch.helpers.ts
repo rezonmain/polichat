@@ -7,6 +7,7 @@ import {
   TwitchIRCMessageTags,
   TwitchIRCSource,
   TwitchIRCRawParts,
+  TwitchIRCParams,
 } from "@/types/twitch.types";
 
 const parseRawParts = (raw: string): TwitchIRCRawParts => {
@@ -99,8 +100,15 @@ const parseCommandFromRawPart = (rawPart: string): TwitchIRCCommand => {
   }
 };
 
-const parseParamsFromRawPart = (rawPart: string): string[] => {
-  return [];
+const parseParamsFromRawPart = (rawPart: string): TwitchIRCParams => {
+  if (empty(rawPart)) {
+    return { params: "" };
+  }
+  if (rawPart[0] === "!") {
+    return { botCommand: rawPart.slice(1), params: rawPart };
+  }
+
+  return { params: rawPart };
 };
 
 const parseCompleteMessage = (raw: string): TwitchIRCMessage => {
@@ -110,7 +118,7 @@ const parseCompleteMessage = (raw: string): TwitchIRCMessage => {
     tags: parseTagsFromRawPart(parts.tgs),
     source: parseSourceFromRawPart(parts.src),
     command: parseCommandFromRawPart(parts.cmd),
-    params: parseParamsFromRawPart(parts.pms),
+    parameters: parseParamsFromRawPart(parts.pms),
   };
 };
 

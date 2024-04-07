@@ -24,7 +24,7 @@ type TwitchIRCMessage = {
   /**
    * The parameters of the command
    */
-  params: string[];
+  parameters: TwitchIRCParams;
 };
 
 type TwitchIRCRawParts = {
@@ -60,10 +60,16 @@ type TwitchIRCCommand = {
   [key: string]: any;
 };
 
+type TwitchIRCParams = {
+  botCommand?: string;
+  params: string;
+};
+
 export type {
   TwitchIRCRawParts,
   TwitchIRCMessage,
   TwitchIRCMessageTags,
   TwitchIRCSource,
   TwitchIRCCommand,
+  TwitchIRCParams,
 };

@@ -18,7 +18,7 @@ class TwitchIRCLazyMessage implements TwitchIRCMessage {
   private tgs: P<"tags">;
   private src: P<"source">;
   private cmd: P<"command">;
-  private pms: P<"params">;
+  private pms: P<"parameters">;
   /**
    * Raw parsed parts of the message
    */
@@ -56,7 +56,7 @@ class TwitchIRCLazyMessage implements TwitchIRCMessage {
     return this.getProperty(this.cmd);
   }
 
-  get params() {
+  get parameters() {
     return this.getProperty(this.pms);
   }
 }
