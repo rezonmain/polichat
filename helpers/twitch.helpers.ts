@@ -9,6 +9,11 @@ import {
   TwitchIRCRawParts,
   TwitchIRCParams,
 } from "@/types/twitch.types";
+import {
+  parseSimpleNestedTag,
+  parseEmotesTag,
+  parseEmoteSetsTag,
+} from "@/helpers/twitchTags.helpers";
 
 const parseRawParts = (raw: string): TwitchIRCRawParts => {
   let index = 0;
@@ -39,8 +44,36 @@ const parseRawParts = (raw: string): TwitchIRCRawParts => {
   return p;
 };
 
-const parseTagsFromRawPart = (rawPart: string): TwitchIRCMessageTags => {
-  return {};
+const parseTagsFromRawPart = (rawPart: string): TwitchIRCMessageTags | null => {
+  if (empty(rawPart)) return null;
+  const parsedTags: TwitchIRCMessageTags = {};
+  const tags = rawPart.split(";");
+
+  for (const tag of tags) {
+    const [key, value] = tag.split("=");
+    if (empty(key) || empty(value)) continue;
+
+    switch (key) {
+      case "badges":
+      case "badge-info":
+        parsedTags[key] = parseSimpleNestedTag(value);
+        continue;
+      case "emotes":
+        parsedTags[key] = parseEmotesTag(value);
+        continue;
+      case "emote-sets":
+        parsedTags[key] = parseEmoteSetsTag(value);
+        continue;
+      case "client-nonce":
+      case "flags":
+        continue;
+      default:
+        parsedTags[key] = value;
+        break;
+    }
+  }
+
+  return parsedTags;
 };
 
 const parseSourceFromRawPart = (rawPart: string): TwitchIRCSource | null => {

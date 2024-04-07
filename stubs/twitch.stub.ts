@@ -1,5 +1,6 @@
 import {
   TwitchIRCCommand,
+  TwitchIRCMessageTags,
   TwitchIRCRawParts,
   TwitchIRCSource,
 } from "@/types/twitch.types";
@@ -105,8 +106,75 @@ const PARSE_COMMAND_FROM_RAW_PART_CASES: [string, TwitchIRCCommand][] = [
   [MESSAGE_RAW_PARTS[7].cmd, { ident: "366" }],
 ];
 
+const PARSE_TAGS_FROM_RAW_PART_CASES: [string, TwitchIRCMessageTags | null][] =
+  [
+    [
+      "badges=moderator/1,subscriber/0;color=#0000FF;display-name=Petso;emotes=;flags=;id=1a2b3c4d-1a2b-1a2b-1a2b-1a2b3c4d5e6f;mod=1;room-id=123456;subscriber=0;tmi-sent-ts=1234567890;turbo=0;user-id=123456;user-type=mod",
+      {
+        badges: {
+          moderator: "1",
+          subscriber: "0",
+        },
+        color: "#0000FF",
+        "display-name": "Petso",
+        id: "1a2b3c4d-1a2b-1a2b-1a2b-1a2b3c4d5e6f",
+        mod: "1",
+        "room-id": "123456",
+        subscriber: "0",
+        "tmi-sent-ts": "1234567890",
+        turbo: "0",
+        "user-id": "123456",
+        "user-type": "mod",
+      },
+    ],
+    [MESSAGE_RAW_PARTS[0].tgs, null],
+    [
+      MESSAGE_RAW_PARTS[2].tgs,
+      {
+        badges: {
+          staff: "1",
+          broadcaster: "1",
+          turbo: "1",
+        },
+        color: "#FF0000",
+        "display-name": "PetsgomOO",
+        "emote-only": "1",
+        emotes: {
+          "33": [
+            {
+              start: "0",
+              end: "7",
+            },
+          ],
+        },
+        id: "c285c9ed-8b1b-4702-ae1c-c64d76cc74ef",
+        mod: "0",
+        "room-id": "81046256",
+        subscriber: "0",
+        turbo: "0",
+        "tmi-sent-ts": "1550868292494",
+        "user-id": "81046256",
+        "user-type": "staff",
+      },
+    ],
+    [
+      "emotes=25:0-4,12-16/1902:6-10",
+      {
+        emotes: {
+          "25": [
+            { start: "0", end: "4" },
+            { start: "12", end: "16" },
+          ],
+          "1902": [{ start: "6", end: "10" }],
+        },
+      },
+    ],
+    ["emote-sets=0,33,50,237", { "emote-sets": ["0", "33", "50", "237"] }],
+  ];
+
 export {
   PARSE_RAW_PARTS_CASES,
   PARSE_SOURCE_FROM_RAW_PART_CASES,
   PARSE_COMMAND_FROM_RAW_PART_CASES,
+  PARSE_TAGS_FROM_RAW_PART_CASES,
 };
