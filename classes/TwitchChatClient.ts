@@ -1,6 +1,6 @@
-import { ranFixLenInt } from "@/helpers/utils.helpers";
+import { Logger } from "@/classes/Logger";
 import { TwitchIRCMessageParser } from "@/classes/TwitchIRCMessageParser";
-import type { TwitchIRCMessage } from "@/types/twitch.types";
+import { ranFixLenInt } from "@/helpers/utils.helpers";
 
 class TwitchChatClient {
   static SECURE_WEBSOCKET_URL = "wss://irc-ws.chat.twitch.tv:443";
@@ -22,7 +22,8 @@ class TwitchChatClient {
     private parser = new TwitchIRCMessageParser(),
     private username = TwitchChatClient.getRandomAnonUsername(),
     private password = TwitchChatClient.ANON_PASSWORD,
-    private capabilities = TwitchChatClient.CAPABILITIES
+    private capabilities = TwitchChatClient.CAPABILITIES,
+    private logger = new Logger()
   ) {}
 
   connect() {
@@ -49,8 +50,10 @@ class TwitchChatClient {
     this.wsc.send(`JOIN #${this.channelName}`);
   }
 
-  private pong(m: TwitchIRCMessage) {
-    this.wsc.send(`PONG ${m.parameters.params}`);
+  private pong(host: string) {
+    const pong = `PONG ${host}`;
+    this.wsc.send(pong);
+    this.logger.log(`Responded to PING with ${pong}`);
   }
 
   private handleMessage(raw: string) {
@@ -63,7 +66,7 @@ class TwitchChatClient {
           this.joinChannel();
           break;
         case "PING":
-          this.pong(m);
+          this.pong(m.parameters.params);
           break;
         case "PRIVMSG":
           console.log(m.parameters.params);
